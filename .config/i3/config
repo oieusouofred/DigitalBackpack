@@ -1,0 +1,448 @@
+
+                _/_/_/_/            _/_/_/_/        _/
+               _/        _/  _/_/  _/          _/_/_/
+              _/_/_/    _/_/      _/_/_/    _/    _/
+             _/        _/        _/        _/    _/
+            _/        _/        _/_/_/_/    _/_/_/
+
+# Please see http://i3wm.org/docs/userguide.html for a complete reference!
+# This is Korea's i3 configuration file.
+# Based of Luke Smith's config
+# Github: https://github.com/LukeSmithxyz
+
+# #-------------Basic Definitions--------# #
+
+#KEYPAD
+set $mod Mod4
+
+#TERMINAL
+# set $term --no-startup-id st
+
+#FONTS
+font xft: Hack, 9 #(pacman -S ttf-hack )
+
+#Needed for i3-gaps
+# for_window [class="^.*"] border pixel 3
+# gaps inner 15
+# gaps outer 15
+
+#SYSTEMD
+set $shutdown   sudo shutdown -h now
+set $reboot     sudo reboot
+set $netrefresh --no-startup-id sudo systemctl restart NetworkManager
+set $hibernate  sudo systemctl suspend
+
+# HANDLE POPUPS
+popup_during_fullscreen smart
+
+# open new widows at the bottom by default
+# vertical | horizontal
+default_orientation horizontal
+
+# toggle border visible | hidden
+bindsym $mod+period exec i3-msg border toggle
+for_window [class="[.]*"] border pixel 3
+
+# Border style of new tiles
+# <normal|1pixel|none|pixel>
+new_window    2pixel
+new_float     normal
+
+# focus follows mouse
+focus_follows_mouse no
+
+# Use Mouse+$mod to drag floating windows to their wanted position
+floating_modifier $mod
+
+# reload the configuration file
+bindsym Ctrl+Mod1+c     reload
+# RESTART i3 inplace
+bindsym Ctrl+Mod1+r     restart
+
+# #-------------Starting External Scripts--------# #
+
+#Setting the background: (scale|tile|fill) --randomize
+exec_always --no-startup-id feh --bg-scale ~/.config/wall.png
+#Mount other drives:
+exec --no-startup-id sudo mount -a
+#Set initial volume level
+exec amixer sset Master 20%
+#Unclutter makes the mouse invisible after a brief period
+exec --no-startup-id unclutter
+#Torrent daemon:
+exec --no-startup-id transmission-daemon
+#Network Manager applet
+#exec --no-startup-id nm-applet
+#Runs the key remapping scripts
+exec --no-startup-id ~/.scripts/remaps
+#Starts dunst for notifications:
+exec --no-startup-id dunst
+#Music player daemon:
+exec --no-startup-id mpd
+
+
+bar {
+	status_command i3blocks #--config ~/.i3/i3status.conf
+	position top            #<top|bottom>
+	mode dock               #<dock|hide>
+	modifier None
+}
+
+# #-------------Audio and Music Definitions--------# #
+
+# For cmus:
+#set $music   --no-startup-id st -e cmus
+#set $pause   --no-startup-id cmus-remote -u
+#set $next    --no-startup-id cmus-remote -n
+#set $prev    --no-startup-id cmus-remote -r
+#set $lilfor  --no-startup-id cmus-remote -k +10
+#set $bigfor  --no-startup-id cmus-remote -k +120
+#set $lilbak  --no-startup-id cmus-remote -k -10
+#set $bigbak  --no-startup-id cmus-remote -k -120
+#set $beg     --no-startup-id cmus-remote -k 00:00:00
+
+# For mpc:
+# set $music    --no-startup-id st -e ncmpcpp
+# set $pause    --no-startup-id mpc toggle
+# set $trupause --no-startup-id mpc pause
+# set $next     --no-startup-id mpc next
+# set $prev     --no-startup-id mpc prev
+# set $lilfor   --no-startup-id mpc seek +10
+# set $bigfor   --no-startup-id mpc seek +120
+# set $lilbak   --no-startup-id mpc seek -10
+# set $bigbak   --no-startup-id mpc seek -120
+# set $beg      --no-startup-id mpc seek 0%
+
+# For moc:
+#set $music     --no-startup-id st -e mocp
+#set $pause     --no-startup-id mocp -G
+#set $truepause --no-startup-id mocp -P
+#set $next      --no-startup-id mocp -f
+#set $prev      --no-startup-id mocp -r
+#set $lilfor    --no-startup-id mocp -k 10
+#set $bigfor    --no-startup-id mocp -k 120
+#set $lilbak    --no-startup-id mocp -k -10
+#set $bigbak    --no-startup-id mocp -k -120
+#set $beg       --no-startup-id mocp -j 0%
+
+#For PULSEAUDIO/PAMIXER
+# set $inc      --no-startup-id pamixer --allow-boost -i 5
+# set $biginc   --no-startup-id pamixer --allow-boost -i 15
+# set $dec      --no-startup-id pamixer --allow-boost -d 5
+# set $bigdec   --no-startup-id pamixer --allow-boost -d 15
+# set $mute     --no-startup-id pamixer --allow-boost -t
+# set $micmute  --no-startup-id pamixer --allow-boost -t
+# set $truemute --no-startup-id pamixer -m
+
+#FOR ALSA/AMIXER
+set $inc      --no-startup-id amixer sset Master 2%+
+set $biginc   --no-startup-id amixer sset Master 5%+
+set $dec      --no-startup-id amixer sset Master 2%-
+set $bigdec   --no-startup-id amixer sset Master 5%-
+set $mute     --no-startup-id amixer sset Master toggle
+set $truemute --no-startup-id amixer sset Master mute
+
+# #-------------Basic Bindings--------# #
+
+#ENTER
+bindsym $mod+Return         exec $term
+# bindsym $mod+Shift+Return
+
+#SPACE
+bindsym $mod+Shift+space    floating toggle
+bindsym $mod+space          focus mode_toggle
+
+#ESC
+bindsym $mod+Escape         workspace prev
+bindsym $mod+Shift+Escape   exec prompt "Are you sure you want to leave i3?" "i3-msg exit"
+
+#BACKSPACE
+# bindsym $mod+BackSpace
+bindsym $mod+Shift+BackSpace  exec prompt "Are you sure you want to reboot?" "$reboot"
+#STOP/HIDE EVERYTHING:
+bindsym $mod+Shift+Delete exec $truemute ; exec $truepause ; workspace lmao ; exec $term -e htop ; exec $term -e ranger
+
+# #-------------Letter Key Bindings (QWERTY)--------# #
+
+bindsym $mod+q          kill
+bindsym $mod+Shift+q    kill
+
+bindsym $mod+w          exec $term -e sudo wifi-menu
+bindsym $mod+Shift+w    exec --no-startup-id $BROWSER
+
+#bindsym $mod+e         exec $term -e
+#bindsym $mod+Shift+e
+
+# trigger the resize mode
+bindsym $mod+r          exec $term -e mode "resize"
+bindsym $mod+Shift+r    exec $term -e sudo ranger /
+
+bindsym $mod+t          split toggle
+# bindsym $mod+Shift+t    gaps inner current set 15; gaps outer current set 15
+
+bindsym $mod+y          exec $term -e calcurse
+bindsym $mod+Shift+y    resize shrink width 10 px or 10ppt
+
+bindsym $mod+u          [instance="dropdown"] scratchpad show;[instance="dropdown"] move position center
+bindsym $mod+Shift+u    resize shrink height 10 px or 10 ppt
+
+bindsym $mod+i          exec $term -e htop
+bindsym $mod+Shift+i    resize grow height 10 px or 10 ppt
+
+bindsym $mod+o          sticky toggle
+bindsym $mod+Shift+o    resize grow width 10 px or 10 ppt
+
+bindsym $mod+p          exec $pause
+bindsym $mod+Shift+p    exec mypaint
+
+bindsym $mod+a          [instance="math"] scratchpad show; [instance="math"] move position center
+bindsym $mod+Shift+a    exec $term -e ncpamixer
+
+# bindsym $mod+s          gaps inner current plus 5
+# bindsym $mod+Shift+s    gaps inner current minus 5
+
+bindsym $mod+d          exec --no-startup-id dmenu_run
+# bindsym $mod+Shift+d    gaps inner current set 0; gaps outer current set 0
+
+bindsym $mod+f          fullscreen toggle
+#bindsym $mod+Shift+f
+
+bindsym $mod+g          workspace prev
+bindsym $mod+Shift+g    exec --no-startup-id gimp; workspace $ws5
+
+bindsym $mod+h          focus left
+bindsym $mod+Shift+h    move left 30
+
+bindsym $mod+j          focus down
+bindsym $mod+Shift+j    move down 30
+
+bindsym $mod+k          focus up
+bindsym $mod+Shift+k    move up 30
+
+bindsym $mod+l          focus right
+bindsym $mod+Shift+l    move right 30
+
+# TOGGLE TOUCHPAD
+bindsym $mod+ccedilla         exec --no-startup-id xinput set-prop 13 "Device Enabled" 0
+bindsym $mod+Shift+ccedilla   exec --no-startup-id xinput set-prop 13 "Device Enabled" 1
+
+bindsym $mod+z          gaps outer current plus 5
+bindsym $mod+Shift+z    gaps outer current minus 5
+
+bindsym $mod+x          exec --no-startup-id ~/.config/i3/lock.sh
+bindsym $mod+Shift+x    exec prompt "Are you sure you want to shutdown?" "$shutdown"
+
+bindsym $mod+c          exec --no-startup-id camtoggle
+#bindsym $mod+Shift+c
+
+bindsym $mod+v          exec $term -e ncmpcpp -s visualizer
+bindsym $mod+Shift+v    exec projectM-pulseaudio
+
+bindsym $mod+b          bar mode toggle
+bindsym $mod+Shift+b    floating toggle; sticky toggle; exec --no-startup-id bottomleft
+
+# scratchpad
+bindsym $mod+n          move scratchpad
+bindsym $mod+Shift+n    scratchpad show
+
+bindsym $mod+m          exec $music
+bindsym $mod+Shift+m    exec $mute
+
+# bindsym $mod+Delete
+# bindsym $mod+Shift+Delete
+
+# bindsym $mod+Home
+# bindsym $mod+Shift+Home
+
+# bindsym $mod+End
+# bindsym $mod+Shift+End
+
+# bindsym $mod+Prior
+# bindsym $mod+Shift+Prior
+
+# bindsym $mod+Next
+# bindsym $mod+Shift+Next
+
+##bindsym $mod+grave
+##bindsym $mod+Shift+grave
+
+##bindsym $mod+asciitilde
+##bindsym $mod+Shift+asciitilde
+
+bindsym $mod+semicolon        layout stacking
+bindsym $mod+Shift+semicolon  layout tabbed
+
+bindsym $mod+apostrophe       split horizontal ;; exec $term
+# bindsym $mod+Shift+apostrophe
+
+bindsym $mod+slash            split vertical ;; exec $term
+# bindsym $mod+Shift+slash
+
+# #-------------Function Buttons--------# #
+
+bindsym $mod+F1   exec --no-startup-id mupdf ~/.config/i3/i3_guide.pdf
+# bindsym $mod+F2   restart
+# bindsym $mod+F3   exec --no-startup-id displayselect
+# bindsym $mod+F4   exec --no-startup-id $hibernate
+# bindsym $mod+F5   exec --no-startup-id $netrefresh
+# bindsym $mod+F6   exec --no-startup-id $term -e transmission-remote-cli
+# bindsym $mod+F7
+# bindsym $mod+F8
+# bindsym $mod+F9   exec --no-startup-id dmenumount
+# bindsym $mod+F10  exec --no-startup-id dmenuumount
+# bindsym $mod+F11
+# bindsym $mod+F12
+
+# #-------------Arrow Keys--------# #
+
+bindsym $mod+Left         focus left
+bindsym $mod+Down         focus down
+bindsym $mod+Up           focus up
+bindsym $mod+Right        focus right
+bindsym $mod+Shift+Left   move left
+bindsym $mod+Shift+Down   move down
+bindsym $mod+Shift+Up     move up
+bindsym $mod+Shift+Right  move right
+
+# #-------------Media Keys--------# #
+
+# Volume keys
+bindsym $mod+plus           exec $inc
+bindsym $mod+Shift+plus     exec $biginc
+bindsym $mod+minus          exec $dec
+bindsym $mod+Shift+minus    exec $bigdec
+bindsym $mod+less           exec $prev
+bindsym $mod+Shift+less     exec $beg
+bindsym $mod+greater        exec $next
+bindsym $mod+Shift+greater  exec $next
+
+# For advancing forward/backward in an mpd song
+bindsym $mod+bracketleft        exec $lilbak
+bindsym $mod+Shift+bracketleft  exec $bigbak
+bindsym $mod+bracketright       exec $lilfor
+bindsym $mod+Shift+bracketright exec $bigfor
+
+# For screenshots
+# With shift, it takes one only of the given window.
+bindsym Print             exec --no-startup-id scrot 'Screenshot - %Y-%m-%d-%t_$wx$h_scrot.png' -e 'mv $f ~/Pictures'
+bindsym Shift+Print       exec --no-startup-id scrot -u 'Screenshot - %Y-%m-%d-%t_$wx$h_scrot.png' -e 'mv $f ~/Pictures'
+bindsym $mod+Print        exec --no-startup-id dmenurecord
+bindsym $mod+Scroll_Lock  exec --no-startup-id "killall screenkey || screenkey"
+
+# #---Extra XF86 Keys---# #
+
+# These are the extra media keys that some keyboards have.
+bindsym XF86AudioMute         exec $mute
+bindsym XF86AudioLowerVolume  exec $dec
+bindsym XF86AudioRaiseVolume  exec $inc
+# bindsym XF86AudioRaiseVolume  exec --no-startup-id amixer -D pulse sset Master 5%+ && pkill -RTMIN+1 i3blocks
+# bindsym XF86AudioLowerVolume  exec --no-startup-id amixer -D pulse sset Master 5%- && pkill -RTMIN+1 i3blocks
+# bindsym XF86AudioMute       exec --no-startup-idamixer -D pulse sset Master toggle && pkill -RTMIN+1 i3blocks
+bindsym XF86AudioNext         exec $next
+bindsym XF86AudioPlay         exec $pause
+bindsym XF86AudioPrev         exec $prev
+bindsym XF86AudioStop         exec $pause
+bindsym XF86TouchpadOn        exec --no-startup-id exec synclient TouchpadOff=0
+bindsym XF86TouchpadOff       exec --no-startup-id exec synclient TouchpadOff=1
+#Brightness level (https://github.com/haikarainen/light)
+#bindsym XF86MonBrightnessDown   exec --no-startup-id light -U 1
+#bindsym XF86MonBrightnessUp     exec --no-startup-id light -A 1
+bindsym XF86MonBrightnessDown exec --no-startup-id xbacklight -dec 15
+bindsym XF86MonBrightnessUp   exec --no-startup-id xbacklight -inc 15
+bindsym XF86WLAN              exec $netrefresh
+
+# #-------------Workspace Bindings--------# #
+
+#switching to the previous workspace hitting the actual one's number
+workspace_auto_back_and_forth yes
+#switch back and forth between the last two workspaces that you visited
+bindsym $mod+Tab              workspace back_and_forth
+bindsym $mod+backslash        workspace back_and_forth
+bindsym Mod1+Tab              workspace next
+bindsym Shift+Mod1+Tab        workspace prev
+
+# resize window (you can also use the mouse for that)
+mode "resize" {
+        # These bindings trigger as soon as you enter the resize mode
+        bindsym j resize shrink width 10 px or 10 ppt
+        bindsym k resize grow height 10 px or 10 ppt
+        bindsym l resize shrink height 10 px or 10 ppt
+        bindsym ccedilla resize grow width 10 px or 10 ppt
+
+        # same bindings, but for the arrow keys
+        bindsym Left resize shrink width 10 px or 10 ppt
+        bindsym Up resize grow height 10 px or 10 ppt
+        bindsym Down resize shrink height 10 px or 10 ppt
+        bindsym Right resize grow width 10 px or 10 ppt
+
+        # back to normal: Enter or Escape
+        bindsym Return mode "default"
+        bindsym Escape mode "default"
+}
+
+# switch to workspace
+bindsym $mod+1    workspace $ws1
+bindsym $mod+2    workspace $ws2
+bindsym $mod+3    workspace $ws3
+bindsym $mod+4    workspace $ws4
+bindsym $mod+5    workspace $ws5
+bindsym $mod+6    workspace $ws6
+bindsym $mod+7    workspace $ws7
+bindsym $mod+8    workspace $ws8
+bindsym $mod+9    workspace $ws9
+bindsym $mod+0    workspace $ws10
+# bindsym $mod+minus workspace  $WSminus
+# bindsym $mod+equal workspace  $WSequal
+
+# move focused container to workspace
+bindsym $mod+Shift+1  move container to workspace $ws1
+bindsym $mod+Shift+2  move container to workspace $ws2
+bindsym $mod+Shift+3  move container to workspace $ws3
+bindsym $mod+Shift+4  move container to workspace $ws4
+bindsym $mod+Shift+5  move container to workspace $ws5
+bindsym $mod+Shift+6  move container to workspace $ws6
+bindsym $mod+Shift+7  move container to workspace $ws7
+bindsym $mod+Shift+8  move container to workspace $ws8
+bindsym $mod+Shift+9  move container to workspace $ws9
+bindsym $mod+Shift+0  move container to workspace $ws10
+# bindsym $mod+Shift+minus move container to workspace  $WSminus
+# bindsym $mod+Shift+equal move container to workspace  $WSequal
+
+# Workspaces variables
+set $ws1 "1"
+set $ws2 "2"
+set $ws3 "3"
+set $ws4 "4"
+set $ws5 "5"
+set $ws6 "6"
+set $ws7 "7"
+set $ws8 "8"
+set $ws9 "9"
+set $ws10 "10"
+#set $WSminus ↓↓↓
+#set $WSequal ♪♫
+
+#GIMP Windows
+for_window [title="GIMP Startup"] move workspace $ws5
+for_window [class="Gimp"] move workspace $ws5
+for_window [window_role="gimp-dock"] floating disable; move left; resize shrink width 50 px or 50ppt
+for_window [window_role="gimp-toolbox"] floating disable; move right;
+workspace $ws5 gaps inner 0
+workspace $ws5 gaps outer 0
+
+# A window running R or Python for basic arithmetic
+# binded to mod+a.
+for_window [instance="math"] floating enable
+for_window [instance="math"] resize set 800 300
+for_window [instance="math"] move scratchpad
+for_window [instance="math"] border pixel 5
+exec --no-startup-id $term -n math -f mono:pixelsize=24 -e dropdowncalc
+
+  (c).-.(c)
+   / ._. \
+ __\( Y )/__
+(_.-/'-'\-._)
+   || 0 ||
+ _.' `-' '._
+(.-./`-'\.-.)
+ `-'     `-'
